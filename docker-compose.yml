@@ -1,0 +1,16 @@
+services:
+  postgres:
+    container_name: colmena-db
+    image: postgres:16-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: colmena_db
+    volumes:
+      - colmenadb_data:/var/lib/postgresql/data
+
+volumes:
+  colmenadb_data:
