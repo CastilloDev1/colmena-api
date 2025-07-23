@@ -51,7 +51,7 @@ export class PatientController {
    */
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar paciente' })
-  @ApiParam({ name: 'id', description: 'UUID del paciente' })
+  @ApiParam({ name: 'id', description: 'ID del paciente' })
   @ApiBody({ type: UpdatePatientDto })
   @ApiResponse({ status: 200, description: 'Paciente actualizado.' })
   update(@Param('id') id: string, @Body() updatePatientDto: UpdatePatientDto) {
@@ -63,7 +63,7 @@ export class PatientController {
    */
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar paciente' })
-  @ApiParam({ name: 'id', description: 'UUID del paciente' })
+  @ApiParam({ name: 'id', description: 'ID del paciente' })
   @ApiResponse({ status: 200, description: 'Paciente eliminado.' })
   remove(@Param('id') id: string) {
     return this.patientService.remove(id);

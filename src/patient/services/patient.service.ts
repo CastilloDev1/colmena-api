@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { PatientRepository } from './patient.repository';
+import { PatientRepository } from '../repositories/patient.repository';
 import { CreatePatientDto } from '../dto/create-patient.dto';
 import { UpdatePatientDto } from '../dto/update-patient.dto';
 
@@ -33,30 +33,30 @@ export class PatientService {
   }
 
   /**
-   * Busca un paciente por su patientId (UUID).
-   * @param patientId UUID del paciente
+   * Busca un paciente por su id (documento).
+   * @param id Documento del paciente
    * @throws NotFoundException si el paciente no existe
    */
-  async findOne(patientId: string) {
-    const patient = await this.patientRepository.findOne(patientId);
+  async findOne(id: string) {
+    const patient = await this.patientRepository.findOne(id);
     if (!patient) throw new NotFoundException('Paciente no encontrado');
     return patient;
   }
 
   /**
    * Actualiza los datos de un paciente existente.
-   * @param patientId UUID del paciente
+   * @param id Documento del paciente
    * @param data Datos a actualizar
    */
-  async update(patientId: string, data: UpdatePatientDto) {
-    return this.patientRepository.update(patientId, data);
+  async update(id: string, data: UpdatePatientDto) {
+    return this.patientRepository.update(id, data);
   }
 
   /**
-   * Elimina un paciente por su patientId (UUID).
-   * @param patientId UUID del paciente
+   * Elimina un paciente por su id (documento).
+   * @param id Documento del paciente
    */
-  async remove(patientId: string) {
-    return this.patientRepository.remove(patientId);
+  async remove(id: string) {
+    return this.patientRepository.remove(id);
   }
 }
