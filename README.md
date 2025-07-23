@@ -23,13 +23,16 @@
 
 # Colmena API
 
-API RESTful construida con [NestJS](https://nestjs.com/) y [Prisma ORM](https://www.prisma.io/) para la gestión de pacientes.
+API RESTful construida con [NestJS](https://nestjs.com/) y [Prisma ORM](https://www.prisma.io/) para la gestión de pacientes y doctores.
 
 Incluye:
-- CRUD completo del dominio **Patient**
+- CRUD completo para los dominios **Patient** y **Doctor**
 - Validación robusta de variables de entorno con Joi
-- Documentación interactiva con Swagger (OpenAPI)
-- Integración con PostgreSQL
+- Validación exhaustiva de DTOs con class-validator y documentación Swagger
+- Arquitectura verticalizada por dominio (controllers, services, repositories, dto)
+- Lógica de unicidad implementada a nivel de servicio para campos clave (id y email)
+- Manejo global de errores con filtros personalizados
+- Integración con PostgreSQL y Prisma
 - Contenerización con Docker y docker-compose
 - Pruebas unitarias básicas
 
@@ -100,13 +103,31 @@ colmena-api/
 │   ├── main.ts
 │   ├── config/
 │   │   └── configuration.ts
-│   └── patient/
-│       ├── dto/
-│       │   ├── create-patient.dto.ts
-│       │   └── update-patient.dto.ts
-│       ├── patient.controller.ts
-│       ├── patient.module.ts
-│       ├── patient.service.ts
+│   ├── common/
+│   │   └── filters/
+│   │       └── http-exception.filter.ts
+│   ├── patient/
+│   │   ├── controllers/
+│   │   │   └── patient.controller.ts
+│   │   ├── dto/
+│   │   │   ├── create-patient.dto.ts
+│   │   │   └── update-patient.dto.ts
+│   │   ├── repositories/
+│   │   │   └── patient.repository.ts
+│   │   ├── services/
+│   │   │   └── patient.service.ts
+│   │   └── patient.module.ts
+│   ├── doctor/
+│   │   ├── controllers/
+│   │   │   └── doctor.controller.ts
+│   │   ├── dto/
+│   │   │   ├── create-doctor.dto.ts
+│   │   │   └── update-doctor.dto.ts
+│   │   ├── repositories/
+│   │   │   └── doctor.repository.ts
+│   │   ├── services/
+│   │   │   └── doctor.service.ts
+│   │   └── doctor.module.ts
 ├── prisma/
 │   ├── schema.prisma
 │   ├── prisma.service.ts
@@ -119,13 +140,23 @@ colmena-api/
 
 ## Uso de la API
 
-La API expone endpoints para CRUD de pacientes bajo `/patient`. Ejemplo de endpoints:
+La API expone endpoints RESTful para los dominios **Patient** y **Doctor**. Ejemplo de endpoints:
 
+### Pacientes (`/patient`)
 - `POST /patient` — Crear paciente
 - `GET /patient` — Listar pacientes
-- `GET /patient/:id` — Obtener paciente por ID
-- `PATCH /patient/:id` — Actualizar paciente
-- `DELETE /patient/:id` — Eliminar paciente
+- `GET /patient/:id` — Obtener paciente por ID (documento)
+- `PATCH /patient/:id` — Actualizar paciente por ID (documento)
+- `DELETE /patient/:id` — Eliminar paciente por ID (documento)
+
+### Doctores (`/doctors`)
+- `POST /doctors` — Crear doctor
+- `GET /doctors` — Listar doctores
+- `GET /doctors/identificacion/:id` — Obtener doctor por ID (documento)
+- `PATCH /doctors/:id` — Actualizar doctor por ID (documento)
+- `DELETE /doctors/:id` — Eliminar doctor por ID (documento)
+
+Ambos dominios aplican validación estricta de DTOs y lógica de unicidad para `id` y `email` en la capa de servicio.
 
 
 ```bash
@@ -147,11 +178,11 @@ La documentación interactiva y pruebas de la API están disponibles en:
 http://localhost:3000/api
 ```
 
-Incluye ejemplos, descripciones y validaciones automáticas de los DTOs.
+Incluye ejemplos, descripciones y validaciones automáticas de los DTOs para ambos dominios. Puedes probar todos los endpoints, ver los modelos y los posibles errores que puede devolver la API.
 
 ## Prisma y Base de Datos
 
-- El modelo principal es `Paciente`, definido en `prisma/schema.prisma`.
+- Los modelos principales son `Paciente` y `Doctor`, definidos en `prisma/schema.prisma`.
 - Usa PostgreSQL como base de datos.
 - Migraciones y generación de cliente Prisma:
   ```bash
@@ -159,6 +190,7 @@ Incluye ejemplos, descripciones y validaciones automáticas de los DTOs.
   npx prisma generate
   ```
 - El servicio Prisma se encuentra en `prisma/prisma.service.ts` y es inyectado en los módulos necesarios.
+- La unicidad de `id` y `email` se valida en la capa de servicio, no por constraints en la base de datos.
 
 
 ```bash
