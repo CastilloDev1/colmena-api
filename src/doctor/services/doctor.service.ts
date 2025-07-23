@@ -32,10 +32,10 @@ export class DoctorService {
   }
 
   /**
-   * Busca un doctor por su doctorId (UUID).
+   * Busca un doctor por su id (documento).
    */
-  async findOne(doctorId: string) {
-    const doctor = await this.doctorRepository.findOne(doctorId);
+  async findOne(id: string) {
+    const doctor = await this.doctorRepository.findOne(id);
     if (!doctor) throw new NotFoundException('Doctor no encontrado');
     return doctor;
   }
@@ -43,14 +43,14 @@ export class DoctorService {
   /**
    * Actualiza los datos de un doctor existente.
    */
-  async update(doctorId: string, data: UpdateDoctorDto) {
-    return this.doctorRepository.update(doctorId, data);
+  async update(id: string, data: UpdateDoctorDto) {
+    return this.doctorRepository.update(id, data);
   }
 
   /**
-   * Elimina un doctor por su doctorId (UUID).
+   * Elimina un doctor por su id (documento).
    */
-  async remove(doctorId: string) {
-    return this.doctorRepository.remove(doctorId);
+  async remove(id: string) {
+    return this.doctorRepository.remove(id);
   }
 }

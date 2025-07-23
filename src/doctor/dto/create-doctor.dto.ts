@@ -7,17 +7,17 @@ export class CreateDoctorDto {
   @IsNotEmpty()
   id: string;
 
-  @ApiProperty({ example: 'Juan', description: 'Nombre del doctor' })
+  @ApiProperty({ example: 'Fabian', description: 'Nombre del doctor' })
   @IsString()
   @IsNotEmpty()
   firstName: string;
 
-  @ApiProperty({ example: 'Pérez', description: 'Apellido del doctor' })
+  @ApiProperty({ example: 'Castillo', description: 'Apellido del doctor' })
   @IsString()
   @IsNotEmpty()
   lastName: string;
 
-  @ApiProperty({ example: 'juan.perez@hospital.com', description: 'Correo electrónico del doctor' })
+  @ApiProperty({ example: 'castillo.fabian@hospital.com', description: 'Correo electrónico del doctor' })
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -40,10 +40,10 @@ export class CreateDoctorDto {
   @ApiProperty({ example: 'TP-987654', description: 'Tarjeta profesional del doctor' })
   @IsString()
   @IsNotEmpty()
-  tarjetaProfesional: string;
+  businessCard: string;
 
   @ApiProperty({ example: '2025-07-23T00:00:00.000Z', description: 'Fecha de ingreso del doctor (ISO 8601)' })
   @IsDateString()
   @IsNotEmpty()
-  fechaIngreso: Date;
+  dateOfAdmission: Date;
 }

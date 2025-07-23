@@ -25,9 +25,9 @@ export class DoctorController {
     return this.doctorService.findAll();
   }
 
-  @Get('identificacion/:id')
+  @Get('identification/:id')
   @ApiOperation({ summary: 'Obtener doctor por ID' })
-  @ApiParam({ name: 'id', description: 'id (documento) del doctor' })
+  @ApiParam({ name: 'identification/id', description: 'id (documento) del doctor' })
   @ApiResponse({ status: 200, description: 'Doctor encontrado.' })
   @ApiResponse({ status: 404, description: 'Doctor no encontrado.' })
   findOne(@Param('id') id: string) {
