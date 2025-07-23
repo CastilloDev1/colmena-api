@@ -21,9 +21,50 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# Colmena API
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+API RESTful construida con [NestJS](https://nestjs.com/) y [Prisma ORM](https://www.prisma.io/) para la gestión de pacientes.
+
+Incluye:
+- CRUD completo del dominio **Patient**
+- Validación robusta de variables de entorno con Joi
+- Documentación interactiva con Swagger (OpenAPI)
+- Integración con PostgreSQL
+- Contenerización con Docker y docker-compose
+- Pruebas unitarias básicas
+
+---
+
+## Tabla de Contenidos
+- [Instalación](#instalación)
+- [Variables de Entorno](#variables-de-entorno)
+- [Comandos Útiles](#comandos-útiles)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Uso de la API](#uso-de-la-api)
+- [Swagger](#swagger)
+- [Prisma y Base de Datos](#prisma-y-base-de-datos)
+- [Docker](#docker)
+- [Testing](#testing)
+- [Licencia](#licencia)
+
+---
+
+## Instalación
+
+```bash
+npm install
+```
+
+## Variables de Entorno
+
+Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
+
+```env
+PORT=3000
+DATABASE_URL=postgresql://usuario:password@localhost:5432/colmena_db
+```
+
+La validación de variables se realiza con Joi antes de levantar la app.
 
 ## Project setup
 
@@ -31,7 +72,61 @@
 $ npm install
 ```
 
-## Compile and run the project
+## Comandos Útiles
+
+```bash
+# Desarrollo
+npm run start:dev
+
+# Producción
+npm run start:prod
+
+# Compilar
+npm run build
+
+# Ejecutar migraciones Prisma
+npx prisma migrate dev
+
+# Generar cliente Prisma
+npx prisma generate
+```
+
+## Estructura del Proyecto
+
+```
+colmena-api/
+├── src/
+│   ├── app.module.ts
+│   ├── main.ts
+│   ├── config/
+│   │   └── configuration.ts
+│   └── patient/
+│       ├── dto/
+│       │   ├── create-patient.dto.ts
+│       │   └── update-patient.dto.ts
+│       ├── patient.controller.ts
+│       ├── patient.module.ts
+│       ├── patient.service.ts
+├── prisma/
+│   ├── schema.prisma
+│   ├── prisma.service.ts
+│   └── migrations/
+├── docker-compose.yml
+├── Dockerfile
+├── .env
+└── README.md
+```
+
+## Uso de la API
+
+La API expone endpoints para CRUD de pacientes bajo `/patient`. Ejemplo de endpoints:
+
+- `POST /patient` — Crear paciente
+- `GET /patient` — Listar pacientes
+- `GET /patient/:id` — Obtener paciente por ID
+- `PATCH /patient/:id` — Actualizar paciente
+- `DELETE /patient/:id` — Eliminar paciente
+
 
 ```bash
 # development
@@ -44,7 +139,27 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Run tests
+## Swagger
+
+La documentación interactiva y pruebas de la API están disponibles en:
+
+```
+http://localhost:3000/api
+```
+
+Incluye ejemplos, descripciones y validaciones automáticas de los DTOs.
+
+## Prisma y Base de Datos
+
+- El modelo principal es `Paciente`, definido en `prisma/schema.prisma`.
+- Usa PostgreSQL como base de datos.
+- Migraciones y generación de cliente Prisma:
+  ```bash
+  npx prisma migrate dev
+  npx prisma generate
+  ```
+- El servicio Prisma se encuentra en `prisma/prisma.service.ts` y es inyectado en los módulos necesarios.
+
 
 ```bash
 # unit tests
@@ -57,42 +172,31 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Deployment
+## Docker
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Puedes levantar la app y la base de datos con Docker Compose:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker-compose up --build
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Esto crea los contenedores de la API y PostgreSQL, y expone los puertos definidos en `.env` y `docker-compose.yml`.
 
-## Resources
+## Testing
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+# Pruebas unitarias
+npm run test
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Cobertura
+npm run test:cov
+```
 
-## Support
+Actualmente existen pruebas básicas para los controladores y servicios. Se recomienda ampliar la cobertura y mockear PrismaService para pruebas unitarias.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Licencia
 
-## Stay in touch
+MIT
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
