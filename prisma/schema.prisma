@@ -35,8 +35,8 @@ model Doctor {
   phone               String   @db.VarChar(20)
   address             String   @db.VarChar(200)
   city                String   @db.VarChar(90)
-  tarjetaProfesional  String   @db.VarChar(50)
-  fechaIngreso        DateTime @default(now())
+  businessCard        String   @db.VarChar(50)
+  dateOfAdmission     DateTime @default(now())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
