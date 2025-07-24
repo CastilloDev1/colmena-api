@@ -13,7 +13,7 @@ export class MedicalOrderService {
     private readonly medicationRepository: MedicationRepository,
   ) {}
 
-  async create(appointmentId: string, createMedicalOrderDto: CreateMedicalOrderDto) {
+  async create(appointmentId: string, createMedicalOrderDto: Omit<CreateMedicalOrderDto, 'appointmentId'>) {
     const appointment = await this.appointmentRepository.findById(appointmentId);
     if (!appointment) {
       throw new NotFoundException(`La cita con ID ${appointmentId} no fue encontrada.`);
@@ -79,5 +79,22 @@ export class MedicalOrderService {
     await this.findById(medicalOrderId);
 
     return this.medicalOrderRepository.getMedications(medicalOrderId);
+  }
+
+  /**
+   * Obtiene todas las órdenes médicas asociadas a una cita específica
+   * 
+   * @param appointmentId - ID de la cita
+   * @returns Lista de órdenes médicas de la cita
+   * @throws NotFoundException si la cita no existe
+   */
+  async findByAppointmentId(appointmentId: string) {
+    // Verificar que la cita existe
+    const appointment = await this.appointmentRepository.findById(appointmentId);
+    if (!appointment) {
+      throw new NotFoundException(`La cita con ID ${appointmentId} no fue encontrada.`);
+    }
+
+    return this.medicalOrderRepository.findByAppointmentId(appointmentId);
   }
 }

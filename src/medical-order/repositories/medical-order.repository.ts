@@ -7,7 +7,7 @@ import { CreateMedicalOrderDto } from '../dto/create-medical-order.dto';
 export class MedicalOrderRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(appointmentId: string, createMedicalOrderDto: CreateMedicalOrderDto) {
+  async create(appointmentId: string, createMedicalOrderDto: Omit<CreateMedicalOrderDto, 'appointmentId'>) {
     const { description, specialty, expirationDate } = createMedicalOrderDto;
 
     const data: Prisma.MedicalOrderCreateInput = {
@@ -40,6 +40,34 @@ export class MedicalOrderRepository {
             medication: true,
           },
         },
+      },
+    });
+  }
+
+  /**
+   * Busca todas las órdenes médicas asociadas a una cita específica
+   * 
+   * @param appointmentId - ID de la cita
+   * @returns Lista de órdenes médicas con sus medicamentos
+   */
+  async findByAppointmentId(appointmentId: string) {
+    return this.prisma.medicalOrder.findMany({
+      where: { appointmentId },
+      include: {
+        appointment: {
+          include: {
+            patient: true,
+            doctor: true,
+          },
+        },
+        medications: {
+          include: {
+            medication: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc', // Más recientes primero
       },
     });
   }
