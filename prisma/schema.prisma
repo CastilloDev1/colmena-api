@@ -77,6 +77,40 @@ model MedicalOrder {
   appointment     Appointment  @relation(fields: [appointmentId], references: [id])
   appointmentId   String
 
+  // Relación Many-to-Many con Medication
+  medications     MedicalOrderMedication[]
+
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
+}
+
+model Medication {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  diseases    String[] // Array de enfermedades para las que se prescribe
+
+  // Relación Many-to-Many con MedicalOrder
+  medicalOrders MedicalOrderMedication[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MedicalOrderMedication {
+  id              String   @id @default(uuid())
+  medicalOrderId  String
+  medicationId    String
+  dosage          String?  // Dosis específica para esta orden (ej: "500mg")
+  frequency       String?  // Frecuencia (ej: "cada 8 horas")
+  duration        String?  // Duración (ej: "por 7 días")
+  instructions    String?  // Instrucciones adicionales (ej: "tomar con alimentos")
+
+  medicalOrder    MedicalOrder @relation(fields: [medicalOrderId], references: [id], onDelete: Cascade)
+  medication      Medication   @relation(fields: [medicationId], references: [id])
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([medicalOrderId, medicationId])
 }
