@@ -7,5 +7,6 @@ import { PatientRepository } from './repositories/patient.repository';
 @Module({
   controllers: [PatientController],
   providers: [PatientService, PatientRepository, PrismaService],
+  exports: [PatientRepository],
 })
 export class PatientModule {}

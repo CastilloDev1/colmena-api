@@ -8,44 +8,31 @@ export class PatientRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreatePatientDto) {
-    return this.prisma.paciente.create({ data });
+    return this.prisma.patient.create({ data });
   }
 
   async findAll() {
-    return this.prisma.paciente.findMany();
+    return this.prisma.patient.findMany();
   }
 
-  async findOne(id: string) {
-    const patient = await this.prisma.paciente.findFirst({ where: { id } });
-    if (!patient) throw new Error('Paciente no encontrado');
-    return patient;
+  async findById(patientId: string) {
+    return this.prisma.patient.findUnique({ where: { patientId } });
   }
 
-  async findByIdOrEmail(id: string, email: string) {
-    return this.prisma.paciente.findFirst({
-      where: {
-        OR: [
-          { id },
-          { email },
-        ],
-      },
+  async findByIdentification(id: string) {
+    return this.prisma.patient.findFirst({ where: { id } });
+  }
+
+  async update(patientId: string, updatePatientDto: UpdatePatientDto) {
+    return this.prisma.patient.update({
+      where: { patientId },
+      data: updatePatientDto,
     });
   }
 
-  async update(id: string, data: UpdatePatientDto) {
-    const patient = await this.findOne(id);
-    return this.prisma.paciente.update({
-      where: { patientId: patient.patientId },
-      data,
-    });
+  async remove(patientId: string) {
+    await this.prisma.patient.delete({ where: { patientId } });
+    return { message: 'Paciente eliminado exitosamente' };
   }
-
-  async remove(id: string) {
-    const patient = await this.findOne(id);
-    await this.prisma.paciente.delete({ where: { patientId: patient.patientId } });
-    return {
-      message: 'Paciente eliminado exitosamente',
-    }
-  }
-
 }
+

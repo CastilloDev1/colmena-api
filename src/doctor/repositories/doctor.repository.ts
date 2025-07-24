@@ -15,33 +15,23 @@ export class DoctorRepository {
     return this.prisma.doctor.findMany();
   }
 
-  async findOne(id: string) {
-    const doctor = await this.prisma.doctor.findFirst({ where: { id } });
-    if (!doctor) throw new Error('Doctor no encontrado');
-    return doctor;
+  async findById(doctorId: string) {
+    return this.prisma.doctor.findUnique({ where: { doctorId } });
   }
 
-  async findByIdOrEmail(id: string, email: string) {
-    return this.prisma.doctor.findFirst({
-      where: {
-        OR: [
-          { id },
-          { email },
-        ],
-      },
+  async findByIdentification(id: string) {
+    return this.prisma.doctor.findFirst({ where: { id } });
+  }
+
+  async update(doctorId: string, updateDoctorDto: UpdateDoctorDto) {
+    return this.prisma.doctor.update({
+      where: { doctorId },
+      data: updateDoctorDto,
     });
   }
 
-  async update(id: string, data: UpdateDoctorDto) {
-    const doctor = await this.findOne(id);
-    return this.prisma.doctor.update({ where: { doctorId: doctor.doctorId }, data });
-  }
-
-  async remove(id: string) {
-    const doctor = await this.findOne(id);
-    await this.prisma.doctor.delete({ where: { doctorId: doctor.doctorId } });
-    return {
-      message: 'Doctor eliminado exitosamente',
-    }
+  async remove(doctorId: string) {
+    await this.prisma.doctor.delete({ where: { doctorId } });
+    return { message: 'Doctor eliminado exitosamente' };
   }
 }

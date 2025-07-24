@@ -13,7 +13,7 @@ export class PatientService {
    * @param data Datos del paciente a crear
    */
   async create(data: CreatePatientDto) {
-    const patient = await this.patientRepository.findByIdOrEmail(data.id, data.email);
+    const patient = await this.patientRepository.findByIdentification(data.id);
     if (patient) {
       if (patient.id === data.id) {
         throw new InternalServerErrorException('Ya existe un paciente con este id');
@@ -38,7 +38,7 @@ export class PatientService {
    * @throws NotFoundException si el paciente no existe
    */
   async findOne(id: string) {
-    const patient = await this.patientRepository.findOne(id);
+    const patient = await this.patientRepository.findByIdentification(id);
     if (!patient) throw new NotFoundException('Paciente no encontrado');
     return patient;
   }
@@ -49,7 +49,9 @@ export class PatientService {
    * @param data Datos a actualizar
    */
   async update(id: string, data: UpdatePatientDto) {
-    return this.patientRepository.update(id, data);
+    const patient = await this.patientRepository.findByIdentification(id);
+    if (!patient) throw new NotFoundException('Paciente no encontrado');
+    return this.patientRepository.update(patient.patientId, data);
   }
 
   /**
@@ -57,6 +59,8 @@ export class PatientService {
    * @param id Documento del paciente
    */
   async remove(id: string) {
-    return this.patientRepository.remove(id);
+    const patient = await this.patientRepository.findByIdentification(id);
+    if (!patient) throw new NotFoundException('Paciente no encontrado');
+    return this.patientRepository.remove(patient.patientId);
   }
 }

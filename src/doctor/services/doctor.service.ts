@@ -12,7 +12,7 @@ export class DoctorService {
    * si no existe crea un nuevo doctor en la base de datos.
    */
   async create(data: CreateDoctorDto) {
-    const doctor = await this.doctorRepository.findByIdOrEmail(data.id, data.email);
+    const doctor = await this.doctorRepository.findByIdentification(data.id);
     if (doctor) {
       if (doctor.id === data.id) {
         throw new InternalServerErrorException('Ya existe un doctor con este id');
@@ -35,7 +35,7 @@ export class DoctorService {
    * Busca un doctor por su id (documento).
    */
   async findOne(id: string) {
-    const doctor = await this.doctorRepository.findOne(id);
+    const doctor = await this.doctorRepository.findByIdentification(id);
     if (!doctor) throw new NotFoundException('Doctor no encontrado');
     return doctor;
   }
@@ -44,13 +44,17 @@ export class DoctorService {
    * Actualiza los datos de un doctor existente.
    */
   async update(id: string, data: UpdateDoctorDto) {
-    return this.doctorRepository.update(id, data);
+    const doctor = await this.doctorRepository.findByIdentification(id);
+    if (!doctor) throw new NotFoundException('Doctor no encontrado');
+    return this.doctorRepository.update(doctor.doctorId, data);
   }
 
   /**
    * Elimina un doctor por su id (documento).
    */
   async remove(id: string) {
-    return this.doctorRepository.remove(id);
+    const doctor = await this.doctorRepository.findByIdentification(id);
+    if (!doctor) throw new NotFoundException('Doctor no encontrado');
+    return this.doctorRepository.remove(doctor.doctorId);
   }
 }
