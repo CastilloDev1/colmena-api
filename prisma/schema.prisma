@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,103 +8,124 @@ datasource db {
 }
 
 model Patient {
-  patientId   String   @id @default(uuid()) @unique
-  id          String   @db.VarChar(20) @unique
-  firstName   String   @db.VarChar(90)
-  lastName    String   @db.VarChar(90)
-  email       String   @db.VarChar(200)
-  phone       String   @db.VarChar(20)
-  address     String   @db.VarChar(200)
-  city        String   @db.VarChar(90)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  patientId    String        @id @unique @default(uuid())
+  id           String        @unique @db.VarChar(20)
+  firstName    String        @db.VarChar(90)
+  lastName     String        @db.VarChar(90)
+  email        String        @db.VarChar(200)
+  phone        String        @db.VarChar(20)
+  address      String        @db.VarChar(200)
+  city         String        @db.VarChar(90)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   appointments Appointment[]
+  user         User?
+
+  @@map("patients")
 }
 
 model Doctor {
-  doctorId            String   @id @default(uuid()) @unique
-  id                  String   @db.VarChar(20) @unique
-  firstName           String   @db.VarChar(90)
-  lastName            String   @db.VarChar(90)
-  email               String   @db.VarChar(200)
-  phone               String   @db.VarChar(20)
-  address             String   @db.VarChar(200)
-  city                String   @db.VarChar(90)
-  businessCard        String   @db.VarChar(50)
-  dateOfAdmission     DateTime @default(now())
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  doctorId        String        @id @unique @default(uuid())
+  id              String        @unique @db.VarChar(20)
+  firstName       String        @db.VarChar(90)
+  lastName        String        @db.VarChar(90)
+  email           String        @db.VarChar(200)
+  phone           String        @db.VarChar(20)
+  address         String        @db.VarChar(200)
+  city            String        @db.VarChar(90)
+  businessCard    String        @db.VarChar(50)
+  dateOfAdmission DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  appointments    Appointment[]
+  user            User?
 
-  appointments Appointment[]
+  @@map("doctors")
+}
+
+model Appointment {
+  id            String            @id @default(uuid())
+  date          DateTime
+  status        AppointmentStatus @default(SCHEDULED)
+  patientId     String
+  doctorId      String
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime?
+  doctor        Doctor            @relation(fields: [doctorId], references: [doctorId])
+  patient       Patient           @relation(fields: [patientId], references: [patientId])
+  medicalOrders MedicalOrder[]
+
+  @@map("appointments")
+}
+
+model MedicalOrder {
+  id             String                   @id @default(uuid())
+  description    String
+  specialty      String
+  expirationDate DateTime?
+  appointmentId  String
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+  medications    MedicalOrderMedication[]
+  appointment    Appointment              @relation(fields: [appointmentId], references: [id])
+
+  @@map("medical_orders")
+}
+
+model Medication {
+  id            String                   @id @default(uuid())
+  name          String                   @unique
+  description   String
+  diseases      String[]
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+  medicalOrders MedicalOrderMedication[]
+
+  @@map("medications")
+}
+
+model MedicalOrderMedication {
+  id             String       @id @default(uuid())
+  medicalOrderId String
+  medicationId   String
+  dosage         String?
+  frequency      String?
+  duration       String?
+  instructions   String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  medicalOrder   MedicalOrder @relation(fields: [medicalOrderId], references: [id], onDelete: Cascade)
+  medication     Medication   @relation(fields: [medicationId], references: [id])
+
+  @@unique([medicalOrderId, medicationId])
+  @@map("medical_order_medications")
+}
+
+model User {
+  userId    String   @id @unique @default(uuid())
+  email     String   @unique @db.VarChar(200)
+  password  String   @db.VarChar(255)
+  role      UserRole
+  isActive  Boolean  @default(true)
+  doctorId  String?  @unique
+  patientId String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  doctor    Doctor?  @relation(fields: [doctorId], references: [doctorId])
+  patient   Patient? @relation(fields: [patientId], references: [patientId])
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  DOCTOR
+  RECEPTIONIST
+  PATIENT
 }
 
 enum AppointmentStatus {
   SCHEDULED
   ATTENDED
   MISSED
-}
-
-model Appointment {
-  id          String            @id @default(uuid())
-  date        DateTime
-  status      AppointmentStatus @default(SCHEDULED)
-
-  patient     Patient          @relation(fields: [patientId], references: [patientId])
-  patientId   String
-
-  doctor      Doctor            @relation(fields: [doctorId], references: [doctorId])
-  doctorId    String
-
-  medicalOrders MedicalOrder[]
-
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          ?
-}
-
-model MedicalOrder {
-  id              String       @id @default(uuid())
-  description     String
-  specialty       String
-  expirationDate  DateTime?
-
-  appointment     Appointment  @relation(fields: [appointmentId], references: [id])
-  appointmentId   String
-
-  // Relación Many-to-Many con Medication
-  medications     MedicalOrderMedication[]
-
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-}
-
-model Medication {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String
-  diseases    String[] // Array de enfermedades para las que se prescribe
-
-  // Relación Many-to-Many con MedicalOrder
-  medicalOrders MedicalOrderMedication[]
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model MedicalOrderMedication {
-  id              String   @id @default(uuid())
-  medicalOrderId  String
-  medicationId    String
-  dosage          String?  // Dosis específica para esta orden (ej: "500mg")
-  frequency       String?  // Frecuencia (ej: "cada 8 horas")
-  duration        String?  // Duración (ej: "por 7 días")
-  instructions    String?  // Instrucciones adicionales (ej: "tomar con alimentos")
-
-  medicalOrder    MedicalOrder @relation(fields: [medicalOrderId], references: [id], onDelete: Cascade)
-  medication      Medication   @relation(fields: [medicationId], references: [id])
-
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@unique([medicalOrderId, medicationId])
 }

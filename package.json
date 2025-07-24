@@ -22,7 +22,8 @@
     "test:integration": "jest --testPathPattern='.*controller.spec.ts$'",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "test:ci": "jest --coverage --ci --watchAll=false --reporters=default --reporters=jest-junit"
+    "test:ci": "jest --coverage --ci --watchAll=false --reporters=default --reporters=jest-junit",
+    "db:seed": "npx prisma db seed"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -33,6 +34,8 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.2.0",
     "@prisma/client": "^6.12.0",
+    "@types/bcrypt": "^6.0.0",
+    "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "joi": "^17.13.3",
@@ -120,5 +123,8 @@
       "/node_modules/",
       "/dist/"
     ]
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
