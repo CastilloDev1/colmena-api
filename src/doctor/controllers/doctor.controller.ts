@@ -10,10 +10,10 @@ export class DoctorController {
   constructor(private readonly doctorService: DoctorService) {}
 
   @Post()
-  @HttpCode(200)
+  @HttpCode(201)
   @ApiOperation({ summary: 'Crear doctor' })
   @ApiBody({ type: CreateDoctorDto })
-  @ApiResponse({ status: 200, description: 'Doctor creado exitosamente.' })
+  @ApiResponse({ status: 201, description: 'Doctor creado exitosamente.' })
   create(@Body() createDoctorDto: CreateDoctorDto) {
     return this.doctorService.create(createDoctorDto);
   }
@@ -25,9 +25,9 @@ export class DoctorController {
     return this.doctorService.findAll();
   }
 
-  @Get('identification/:id')
+  @Get(':id')
   @ApiOperation({ summary: 'Obtener doctor por ID' })
-  @ApiParam({ name: 'identification/id', description: 'id (documento) del doctor' })
+  @ApiParam({ name: 'id', description: 'id (documento) del doctor' })
   @ApiResponse({ status: 200, description: 'Doctor encontrado.' })
   @ApiResponse({ status: 404, description: 'Doctor no encontrado.' })
   findOne(@Param('id') id: string) {

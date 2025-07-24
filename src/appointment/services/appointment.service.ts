@@ -134,7 +134,10 @@ export class AppointmentService {
   }
 
   async updateStatus(id: string, updateAppointmentStatusDto: UpdateAppointmentStatusDto) {
-    await this.appointmentRepository.findById(id);
+    const appointment = await this.appointmentRepository.findById(id);
+    if (!appointment) {
+      throw new NotFoundException('Cita no encontrada.');
+    }
     return this.appointmentRepository.updateStatus(id, updateAppointmentStatusDto.status);
   }
 

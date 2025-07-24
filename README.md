@@ -23,18 +23,26 @@
 
 # Colmena API
 
-API RESTful construida con [NestJS](https://nestjs.com/) y [Prisma ORM](https://www.prisma.io/) para la gestión de pacientes y doctores.
+API RESTful para gestión médica construida con [NestJS](https://nestjs.com/) y [Prisma ORM](https://www.prisma.io/). Sistema completo para la administración de pacientes, doctores, citas médicas, órdenes médicas y medicamentos.
 
-Incluye:
-- CRUD completo para los dominios **Patient** y **Doctor**
-- Validación robusta de variables de entorno con Joi
-- Validación exhaustiva de DTOs con class-validator y documentación Swagger
-- Arquitectura verticalizada por dominio (controllers, services, repositories, dto)
-- Lógica de unicidad implementada a nivel de servicio para campos clave (id y email)
-- Manejo global de errores con filtros personalizados
-- Integración con PostgreSQL y Prisma
-- Contenerización con Docker y docker-compose
-- Pruebas unitarias básicas
+## 🚀 **Características Principales**
+
+### **Dominios Implementados:**
+- ✅ **Patient** - Gestión completa de pacientes
+- ✅ **Doctor** - Administración de doctores y especialistas
+- ✅ **Appointment** - Sistema de citas médicas con estados
+- ✅ **MedicalOrder** - Órdenes médicas vinculadas a citas
+- ✅ **Medication** - Catálogo de medicamentos y prescripciones
+
+### **Arquitectura y Tecnologías:**
+- 🏗️ **Arquitectura verticalizada** por dominio (controllers, services, repositories, DTOs)
+- 🔒 **Validación robusta** con Joi para variables de entorno y class-validator para DTOs
+- 📚 **Documentación automática** con Swagger/OpenAPI
+- 🗄️ **Base de datos PostgreSQL** con Prisma ORM
+- 🐳 **Contenerización** completa con Docker y docker-compose
+- 🧪 **Suite de pruebas profesional** con Jest (unitarias e integración)
+- 🔄 **Manejo global de errores** con filtros personalizados
+- 📊 **Cobertura de código** configurada con thresholds del 80%
 
 ---
 
@@ -94,70 +102,298 @@ npx prisma migrate dev
 npx prisma generate
 ```
 
-## Estructura del Proyecto
+## 📁 **Estructura del Proyecto**
 
 ```
-colmena-api/
-├── src/
-│   ├── app.module.ts
-│   ├── main.ts
-│   ├── config/
-│   │   └── configuration.ts
-│   ├── common/
-│   │   └── filters/
-│   │       └── http-exception.filter.ts
-│   ├── patient/
-│   │   ├── controllers/
-│   │   │   └── patient.controller.ts
-│   │   ├── dto/
-│   │   │   ├── create-patient.dto.ts
-│   │   │   └── update-patient.dto.ts
-│   │   ├── repositories/
-│   │   │   └── patient.repository.ts
-│   │   ├── services/
-│   │   │   └── patient.service.ts
-│   │   └── patient.module.ts
-│   ├── doctor/
-│   │   ├── controllers/
-│   │   │   └── doctor.controller.ts
-│   │   ├── dto/
-│   │   │   ├── create-doctor.dto.ts
-│   │   │   └── update-doctor.dto.ts
-│   │   ├── repositories/
-│   │   │   └── doctor.repository.ts
-│   │   ├── services/
-│   │   │   └── doctor.service.ts
-│   │   └── doctor.module.ts
-├── prisma/
-│   ├── schema.prisma
-│   ├── prisma.service.ts
-│   └── migrations/
-├── docker-compose.yml
-├── Dockerfile
-├── .env
+src/
+├── app.module.ts                    # Módulo principal de la aplicación
+├── main.ts                          # Punto de entrada con configuración Swagger
+├── config/
+│   └── env.validation.ts            # Validación de variables de entorno con Joi
+├── common/
+│   └── filters/
+│       └── http-exception.filter.ts # Filtro global de excepciones
+├── test/
+│   ├── test-data.factory.ts         # Factory para datos de prueba
+│   └── test-setup.ts                # Configuración global de tests
+├── patient/                         # 👤 Dominio de Pacientes
+│   ├── controllers/
+│   │   └── patient.controller.ts
+│   ├── dto/
+│   │   ├── create-patient.dto.ts
+│   │   └── update-patient.dto.ts
+│   ├── repositories/
+│   │   └── patient.repository.ts
+│   ├── services/
+│   │   └── patient.service.ts
+│   └── patient.module.ts
+├── doctor/                          # 👨‍⚕️ Dominio de Doctores
+│   ├── controllers/
+│   │   └── doctor.controller.ts
+│   ├── dto/
+│   │   ├── create-doctor.dto.ts
+│   │   └── update-doctor.dto.ts
+│   ├── repositories/
+│   │   └── doctor.repository.ts
+│   ├── services/
+│   │   └── doctor.service.ts
+│   └── doctor.module.ts
+├── appointment/                     # 📅 Dominio de Citas Médicas
+│   ├── controllers/
+│   │   └── appointment.controller.ts
+│   ├── dto/
+│   │   ├── create-appointment.dto.ts
+│   │   ├── update-appointment.dto.ts
+│   │   └── update-status.dto.ts
+│   ├── repositories/
+│   │   └── appointment.repository.ts
+│   ├── services/
+│   │   └── appointment.service.ts
+│   ├── types/
+│   │   └── appointment.types.ts
+│   ├── validators/
+│   │   └── appointment.validator.ts
+│   └── appointment.module.ts
+├── medical-order/                   # 📋 Dominio de Órdenes Médicas
+│   ├── controllers/
+│   │   └── medical-order.controller.ts
+│   ├── dto/
+│   │   └── create-medical-order.dto.ts
+│   ├── repositories/
+│   │   └── medical-order.repository.ts
+│   ├── services/
+│   │   └── medical-order.service.ts
+│   └── medical-order.module.ts
+└── medication/                      # 💊 Dominio de Medicamentos
+    ├── controllers/
+    │   └── medication.controller.ts
+    ├── dto/
+    │   ├── create-medication.dto.ts
+    │   ├── update-medication.dto.ts
+    │   └── search-medication.dto.ts
+    ├── repositories/
+    │   └── medication.repository.ts
+    ├── services/
+    │   └── medication.service.ts
+    └── medication.module.ts
 └── README.md
 ```
 
-## Uso de la API
+## 🗄️ **Modelos de Datos**
 
-La API expone endpoints RESTful para los dominios **Patient** y **Doctor**. Ejemplo de endpoints:
+La aplicación utiliza **PostgreSQL** con **Prisma ORM** y define los siguientes modelos:
 
-### Pacientes (`/patient`)
-- `POST /patient` — Crear paciente
-- `GET /patient` — Listar pacientes
-- `GET /patient/:id` — Obtener paciente por ID (documento)
-- `PATCH /patient/:id` — Actualizar paciente por ID (documento)
-- `DELETE /patient/:id` — Eliminar paciente por ID (documento)
+### **Patient (Paciente)**
+```typescript
+{
+  patientId: string;    // UUID único
+  id: string;          // ID personalizado único (20 chars)
+  firstName: string;   // Nombre (90 chars)
+  lastName: string;    // Apellido (90 chars)
+  email: string;       // Email (200 chars)
+  phone: string;       // Teléfono (20 chars)
+  address: string;     // Dirección (200 chars)
+  city: string;        // Ciudad (90 chars)
+  createdAt: DateTime;
+  updatedAt: DateTime;
+  appointments: Appointment[]; // Relación 1:N
+}
+```
 
-### Doctores (`/doctors`)
-- `POST /doctors` — Crear doctor
-- `GET /doctors` — Listar doctores
-- `GET /doctors/identificacion/:id` — Obtener doctor por ID (documento)
-- `PATCH /doctors/:id` — Actualizar doctor por ID (documento)
-- `DELETE /doctors/:id` — Eliminar doctor por ID (documento)
+### **Doctor (Doctor)**
+```typescript
+{
+  doctorId: string;         // UUID único
+  id: string;              // ID personalizado único (20 chars)
+  firstName: string;       // Nombre (90 chars)
+  lastName: string;        // Apellido (90 chars)
+  email: string;           // Email (200 chars)
+  phone: string;           // Teléfono (20 chars)
+  address: string;         // Dirección (200 chars)
+  city: string;            // Ciudad (90 chars)
+  businessCard: string;    // Tarjeta profesional (50 chars)
+  dateOfAdmission: DateTime; // Fecha de ingreso
+  createdAt: DateTime;
+  updatedAt: DateTime;
+  appointments: Appointment[]; // Relación 1:N
+}
+```
+
+### **Appointment (Cita Médica)**
+```typescript
+{
+  id: string;              // UUID único
+  date: DateTime;          // Fecha y hora de la cita
+  status: AppointmentStatus; // SCHEDULED | ATTENDED | MISSED
+  patientId: string;       // FK a Patient
+  doctorId: string;        // FK a Doctor
+  patient: Patient;        // Relación N:1
+  doctor: Doctor;          // Relación N:1
+  medicalOrders: MedicalOrder[]; // Relación 1:N
+  createdAt: DateTime;
+  updatedAt: DateTime;
+}
+```
+
+### **MedicalOrder (Orden Médica)**
+```typescript
+{
+  id: string;              // UUID único
+  description: string;     // Descripción de la orden
+  specialty: string;       // Especialidad médica
+  expirationDate?: DateTime; // Fecha de expiración (opcional)
+  appointmentId: string;   // FK a Appointment
+  appointment: Appointment; // Relación N:1
+  medications: MedicalOrderMedication[]; // Relación N:N
+  createdAt: DateTime;
+  updatedAt: DateTime;
+}
+```
+
+### **Medication (Medicamento)**
+```typescript
+{
+  id: string;              // UUID único
+  name: string;            // Nombre único del medicamento
+  description: string;     // Descripción del medicamento
+  diseases: string[];      // Array de enfermedades tratadas
+  medicalOrders: MedicalOrderMedication[]; // Relación N:N
+  createdAt: DateTime;
+  updatedAt: DateTime;
+}
+```
+
+### **MedicalOrderMedication (Tabla Pivot)**
+```typescript
+{
+  id: string;              // UUID único
+  medicalOrderId: string;  // FK a MedicalOrder
+  medicationId: string;    // FK a Medication
+  dosage?: string;         // Dosis específica (ej: "500mg")
+  frequency?: string;      // Frecuencia (ej: "cada 8 horas")
+  duration?: string;       // Duración (ej: "por 7 días")
+  instructions?: string;   // Instrucciones adicionales
+  medicalOrder: MedicalOrder; // Relación N:1
+  medication: Medication;  // Relación N:1
+  createdAt: DateTime;
+  updatedAt: DateTime;
+}
+```
+
+## 🔗 **Uso de la API**
+
+### 👤 **Endpoints de Pacientes**
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/patients` | Obtener todos los pacientes |
+| GET | `/patients/:id` | Obtener un paciente por ID único |
+| POST | `/patients` | Crear un nuevo paciente |
+| PATCH | `/patients/:id` | Actualizar un paciente |
+| DELETE | `/patients/:id` | Eliminar un paciente |
+
+### 👨‍⚕️ **Endpoints de Doctores**
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/doctors` | Obtener todos los doctores |
+| GET | `/doctors/:id` | Obtener un doctor por ID único |
+| POST | `/doctors` | Crear un nuevo doctor |
+| PATCH | `/doctors/:id` | Actualizar un doctor |
+| DELETE | `/doctors/:id` | Eliminar un doctor |
+
+### 📅 **Endpoints de Citas Médicas**
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/appointments` | Obtener todas las citas |
+| GET | `/appointments/:id` | Obtener una cita por ID |
+| GET | `/appointments/user/:identification` | Obtener citas por identificación de usuario |
+| POST | `/appointments` | Crear una nueva cita |
+| PATCH | `/appointments/:id` | Actualizar una cita |
+| PATCH | `/appointments/:id/status` | Actualizar solo el estado de una cita |
+| DELETE | `/appointments/:id` | Eliminar una cita |
+
+### 📋 **Endpoints de Órdenes Médicas**
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/medical-orders/:id` | Obtener una orden médica por ID |
+| POST | `/medical-orders` | Crear una nueva orden médica |
+| POST | `/medical-orders/:id/medications/:medicationId` | Adjuntar medicamento a orden |
+| DELETE | `/medical-orders/:id/medications/:medicationId` | Desadjuntar medicamento de orden |
+| GET | `/medical-orders/:id/medications` | Obtener medicamentos de una orden |
+
+### 💊 **Endpoints de Medicamentos**
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/medications` | Obtener todos los medicamentos |
+| GET | `/medications/:id` | Obtener un medicamento por ID |
+| GET | `/medications/disease/:disease` | Buscar medicamentos por enfermedad |
+| POST | `/medications` | Crear un nuevo medicamento |
+| PATCH | `/medications/:id` | Actualizar un medicamento |
+| DELETE | `/medications/:id` | Eliminar un medicamento |
 
 Ambos dominios aplican validación estricta de DTOs y lógica de unicidad para `id` y `email` en la capa de servicio.
 
+## 🧪 **Testing**
+
+La aplicación cuenta con una **suite de pruebas profesional** que incluye pruebas unitarias, de integración y configuración para CI/CD.
+
+### **Comandos de Testing:**
+
+```bash
+# Ejecutar todos los tests con detalles
+npm run test:verbose
+
+# Ejecutar solo tests unitarios (servicios y repositorios)
+npm run test:unit
+
+# Ejecutar solo tests de integración (controladores)
+npm run test:integration
+
+# Generar reporte de cobertura completo
+npm run test:coverage
+
+# Tests en modo watch para desarrollo
+npm run test:watch
+
+# Tests para CI/CD con reportes
+npm run test:ci
+```
+
+### **Estado de Cobertura por Módulo:**
+
+| Módulo | Servicios | Repositorios | Controladores | Estado |
+|--------|-----------|--------------|---------------|---------|
+| **Patient** | ✅ 100% | ✅ 100% | ✅ 100% | **COMPLETO** |
+| **Doctor** | ✅ 100% | ✅ 100% | ✅ 100% | **COMPLETO** |
+| **Appointment** | 🔧 Funcional | 🔧 Funcional | 🔧 Funcional | **FUNCIONAL** |
+| **MedicalOrder** | ✅ Completo | ⏳ Básico | ⏳ Básico | **PARCIAL** |
+| **Medication** | ✅ Completo | ⏳ Básico | ⏳ Básico | **PARCIAL** |
+
+### **Configuración Jest:**
+- **Threshold de cobertura**: 80%
+- **Test helpers** reutilizables con factories
+- **Mocks de Prisma** configurados
+- **Reportes automáticos** para CI/CD
+
+> 📖 **Documentación completa**: Ver [TESTING.md](./TESTING.md) para guías detalladas de testing.
+
+## Docker
+
+Puedes levantar la app y la base de datos con Docker Compose:
+
+```bash
+docker-compose up --build
+```
+
+Esto crea los contenedores de la API y PostgreSQL, y expone los puertos definidos en `.env` y `docker-compose.yml`.
+
+## Licencia
+
+MIT
 
 ```bash
 # development
@@ -214,21 +450,7 @@ docker-compose up --build
 
 Esto crea los contenedores de la API y PostgreSQL, y expone los puertos definidos en `.env` y `docker-compose.yml`.
 
-## Testing
-
-```bash
-# Pruebas unitarias
-npm run test
-
-# Cobertura
-npm run test:cov
-```
-
-Actualmente existen pruebas básicas para los controladores y servicios. Se recomienda ampliar la cobertura y mockear PrismaService para pruebas unitarias.
-
 ## Licencia
 
 MIT
-
-
 

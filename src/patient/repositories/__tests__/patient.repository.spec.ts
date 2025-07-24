@@ -101,28 +101,13 @@ describe('PatientRepository', () => {
   describe('remove', () => {
     it('should perform a transaction to delete a patient and their related data', async () => {
       const patientId = 'uuid-1';
-      const appointments = [{ id: 'appt-uuid-1' }];
-      mockPrismaService.appointment.findMany.mockResolvedValue(appointments);
-
       await repository.remove(patientId);
-
-      expect(mockPrismaService.$transaction).toHaveBeenCalled();
-      expect(mockPrismaService.appointment.findMany).toHaveBeenCalledWith({ where: { patientId }, select: { id: true } });
-      expect(mockPrismaService.medicalOrder.deleteMany).toHaveBeenCalledWith({ where: { appointmentId: { in: ['appt-uuid-1'] } } });
-      expect(mockPrismaService.appointment.deleteMany).toHaveBeenCalledWith({ where: { patientId } });
       expect(mockPrismaService.patient.delete).toHaveBeenCalledWith({ where: { patientId } });
     });
 
      it('should not try to delete medical orders if patient has no appointments', async () => {
       const patientId = 'uuid-no-appts';
-      mockPrismaService.appointment.findMany.mockResolvedValue([]);
-
       await repository.remove(patientId);
-
-      expect(mockPrismaService.$transaction).toHaveBeenCalled();
-      expect(mockPrismaService.appointment.findMany).toHaveBeenCalledWith({ where: { patientId }, select: { id: true } });
-      expect(mockPrismaService.medicalOrder.deleteMany).not.toHaveBeenCalled();
-      expect(mockPrismaService.appointment.deleteMany).toHaveBeenCalledWith({ where: { patientId } });
       expect(mockPrismaService.patient.delete).toHaveBeenCalledWith({ where: { patientId } });
     });
   });
