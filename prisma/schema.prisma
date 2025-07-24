@@ -13,9 +13,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Paciente {
+model Patient {
   patientId   String   @id @default(uuid()) @unique
-  id          String   @db.VarChar(20)
+  id          String   @db.VarChar(20) @unique
   firstName   String   @db.VarChar(90)
   lastName    String   @db.VarChar(90)
   email       String   @db.VarChar(200)
@@ -24,11 +24,13 @@ model Paciente {
   city        String   @db.VarChar(90)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  appointments Appointment[]
 }
 
 model Doctor {
   doctorId            String   @id @default(uuid()) @unique
-  id                  String   @db.VarChar(20)
+  id                  String   @db.VarChar(20) @unique
   firstName           String   @db.VarChar(90)
   lastName            String   @db.VarChar(90)
   email               String   @db.VarChar(200)
@@ -39,4 +41,42 @@ model Doctor {
   dateOfAdmission     DateTime @default(now())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  appointments Appointment[]
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  ATTENDED
+  MISSED
+}
+
+model Appointment {
+  id          String            @id @default(uuid())
+  date        DateTime
+  status      AppointmentStatus @default(SCHEDULED)
+
+  patient     Patient          @relation(fields: [patientId], references: [patientId])
+  patientId   String
+
+  doctor      Doctor            @relation(fields: [doctorId], references: [doctorId])
+  doctorId    String
+
+  medicalOrders MedicalOrder[]
+
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          ?
+}
+
+model MedicalOrder {
+  id              String       @id @default(uuid())
+  description     String
+  specialty       String
+  expirationDate  DateTime?
+
+  appointment     Appointment  @relation(fields: [appointmentId], references: [id])
+  appointmentId   String
+
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 }
