@@ -23,10 +23,6 @@ export class AuthService {
     // Buscar el usuario por email
     const user = await this.prisma.user.findUnique({
       where: { email },
-      include: {
-        doctor: true,
-        patient: true,
-      },
     });
 
     // Verificar si el usuario existe
@@ -78,10 +74,6 @@ export class AuthService {
   async getProfile(userId: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { userId },
-      include: {
-        doctor: true,
-        patient: true,
-      },
     });
 
     if (!user) {
@@ -97,10 +89,6 @@ export class AuthService {
   async validateUser(userId: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { userId },
-      include: {
-        doctor: true,
-        patient: true,
-      },
     });
 
     if (!user || !user.isActive) {

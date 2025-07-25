@@ -33,9 +33,35 @@ async function main() {
     },
   });
 
+  // Crear usuario Enfermera
+  const nurse = await prisma.user.upsert({
+    where: { email: 'enfermera@colmena.com' },
+    update: {},
+    create: {
+      email: 'enfermera@colmena.com',
+      password: defaultPassword,
+      role: UserRole.NURSE,
+      isActive: true,
+    },
+  });
+
+  // Crear usuario Supervisor (solo lectura)
+  const viewer = await prisma.user.upsert({
+    where: { email: 'supervisor@colmena.com' },
+    update: {},
+    create: {
+      email: 'supervisor@colmena.com',
+      password: defaultPassword,
+      role: UserRole.VIEWER,
+      isActive: true,
+    },
+  });
+
   console.log('✅ Usuarios creados:');
   console.log(`- Admin: ${admin.email}`);
   console.log(`- Recepcionista: ${receptionist.email}`);
+  console.log(`- Enfermera: ${nurse.email}`);
+  console.log(`- Supervisor: ${viewer.email}`);
   console.log('📝 Contraseña por defecto para todos: admin123');
   console.log('🌱 Seed completed!');
 }

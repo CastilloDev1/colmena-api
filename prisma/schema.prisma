@@ -19,7 +19,7 @@ model Patient {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   appointments Appointment[]
-  user         User?
+
 
   @@map("patients")
 }
@@ -38,7 +38,6 @@ model Doctor {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
   appointments    Appointment[]
-  user            User?
 
   @@map("doctors")
 }
@@ -103,25 +102,21 @@ model MedicalOrderMedication {
 
 model User {
   userId    String   @id @unique @default(uuid())
-  email     String   @unique @db.VarChar(200)
+  email     String   @unique @db.VarChar(255)
   password  String   @db.VarChar(255)
   role      UserRole
   isActive  Boolean  @default(true)
-  doctorId  String?  @unique
-  patientId String?  @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  doctor    Doctor?  @relation(fields: [doctorId], references: [doctorId])
-  patient   Patient? @relation(fields: [patientId], references: [patientId])
 
   @@map("users")
 }
 
 enum UserRole {
-  ADMIN
-  DOCTOR
-  RECEPTIONIST
-  PATIENT
+  ADMIN        // Acceso completo a todo el sistema
+  RECEPTIONIST // Gestión de pacientes, citas y órdenes médicas
+  NURSE        // Lectura de pacientes, actualización de estados
+  VIEWER       // Solo lectura (supervisores, auditores)
 }
 
 enum AppointmentStatus {
