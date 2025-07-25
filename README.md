@@ -70,13 +70,16 @@
 git clone <repo-url>
 cd colmena-api
 
-# 2. Ejecutar el script de inicio rápido
+# 2. Cambiar rama dev
+git checkout dev
+
+# 3. Ejecutar el script de inicio rápido
 docker compose up --build -d
 
-# 3. Iniciar Prisma
+# 4. Iniciar Prisma
 docker compose exec api npm run prisma:init
 
-# 4. Alimentar base de datos usuarios de prueba
+# 5. Alimentar base de datos usuarios de prueba
 docker compose exec api npm run db:seed
 ```
 
@@ -90,14 +93,19 @@ docker compose exec api npm run db:seed
 Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
-# Servidor
+# Application
 PORT=3000
 
-# Base de datos
-DATABASE_URL=postgresql://usuario:password@localhost:5432/colmena_db
+# Database Configuration (para Docker)
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME=colmena_db
+DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 
-# JWT
-JWT_SECRET=tu_jwt_secret_super_seguro_aqui
+# JWT Configuration
+JWT_SECRET=
 JWT_EXPIRES_IN=1d
 ```
 
