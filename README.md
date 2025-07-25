@@ -70,19 +70,14 @@
 git clone <repo-url>
 cd colmena-api
 
-# 2. Instalar dependencias
-npm install
+# 2. Ejecutar el script de inicio rápido
+docker compose up --build -d
 
-# 3. Configurar variables de entorno
-cp .env.example .env
-# Editar .env con tus valores
+# 3. Iniciar Prisma
+docker compose exec api npm run prisma:init
 
-# 4. Configurar base de datos
-npx prisma migrate dev
-npx prisma db seed
-
-# 5. Iniciar en modo desarrollo
-npm run start:dev
+# 4. Alimentar base de datos usuarios de prueba
+docker compose exec api npm run db:seed
 ```
 
 ✅ **¡Listo!** La API estará disponible en `http://localhost:3000`  

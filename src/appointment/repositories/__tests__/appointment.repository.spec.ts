@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppointmentRepository } from '../appointment.repository';
 import { PrismaService } from '../../../../prisma/prisma.service';
-import { TestDataFactory, createMockPrismaService } from '../../../test/test-helpers';
+import { TestDataFactory, createMockPrismaService } from '../../../../test/test-helpers';
 
 describe('AppointmentRepository', () => {
   let repository: AppointmentRepository;

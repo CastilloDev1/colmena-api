@@ -3,7 +3,7 @@ import { DoctorRepository } from '../doctor.repository';
 import { PrismaService } from '../../../../prisma/prisma.service';
 import { CreateDoctorDto } from '../../dto/create-doctor.dto';
 import { UpdateDoctorDto } from '../../dto/update-doctor.dto';
-import { TestDataFactory, createMockPrismaService } from '../../../test/test-helpers';
+import { TestDataFactory, createMockPrismaService } from '../../../../test/test-helpers';
 
 describe('DoctorRepository', () => {
   let repository: DoctorRepository;

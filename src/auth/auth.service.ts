@@ -6,6 +6,7 @@ import { AuthResponseDto, UserInfoDto } from './dto/auth-response.dto';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { JwtPayload } from './strategies/jwt.strategy';
+import { envs } from '../config/configuration';
 
 @Injectable()
 export class AuthService {
@@ -63,7 +64,7 @@ export class AuthService {
     return {
       access_token,
       token_type: 'Bearer',
-      expires_in: process.env.JWT_EXPIRES_IN || '1d',
+      expires_in: envs.jwtExpiresIn,
       user: userInfo,
     };
   }

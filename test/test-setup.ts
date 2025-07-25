@@ -17,16 +17,6 @@ process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
 // Configurar timezone para tests consistentes
 process.env.TZ = 'UTC';
 
-// Mock global para console.log en tests (opcional)
-// global.console = {
-//   ...console,
-//   log: jest.fn(),
-//   debug: jest.fn(),
-//   info: jest.fn(),
-//   warn: jest.fn(),
-//   error: jest.fn(),
-// };
-
 // Configurar timeout global para tests lentos
 jest.setTimeout(10000);
 

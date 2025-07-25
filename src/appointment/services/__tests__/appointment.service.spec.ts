@@ -9,7 +9,7 @@ import { UpdateAppointmentDto } from '../../dto/update-appointment.dto';
 import { UpdateAppointmentStatusDto } from '../../dto/update-appointment-status.dto';
 import { AppointmentStatus } from '@prisma/client';
 import { AppointmentStatus as LocalAppointmentStatus } from '../../types/appointment-status.enum';
-import { TestDataFactory } from '../../../test/test-helpers';
+import { TestDataFactory } from '../../../../test/test-helpers';
 
 describe('AppointmentService', () => {
   let service: AppointmentService;

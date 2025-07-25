@@ -4,7 +4,7 @@ import { DoctorService } from '../doctor.service';
 import { DoctorRepository } from '../../repositories/doctor.repository';
 import { CreateDoctorDto } from '../../dto/create-doctor.dto';
 import { UpdateDoctorDto } from '../../dto/update-doctor.dto';
-import { TestDataFactory } from '../../../test/test-helpers';
+import { TestDataFactory } from '../../../../test/test-helpers';
 
 describe('DoctorService', () => {
   let service: DoctorService;

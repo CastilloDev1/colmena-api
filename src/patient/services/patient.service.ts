@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { PatientRepository } from '../repositories/patient.repository';
 import { CreatePatientDto } from '../dto/create-patient.dto';
 import { UpdatePatientDto } from '../dto/update-patient.dto';
@@ -16,10 +16,10 @@ export class PatientService {
     const patient = await this.patientRepository.findByIdentification(data.id);
     if (patient) {
       if (patient.id === data.id) {
-        throw new InternalServerErrorException('Ya existe un paciente con este id');
+        throw new UnprocessableEntityException('Ya existe un paciente con este id');
       }
       if (patient.email === data.email) {
-        throw new InternalServerErrorException('Ya existe un paciente con este email');
+        throw new UnprocessableEntityException('Ya existe un paciente con este email');
       }
     }
     return this.patientRepository.create(data);

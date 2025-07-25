@@ -1,12 +1,16 @@
-FROM node:18-alpine
+FROM node:22-alpine
+
+RUN apk add --no-cache python3 make g++ 
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+COPY package*.json .
+COPY prisma ./prisma/
 
 COPY . .
 
-RUN npm run build
+RUN npm install
 
-CMD ["node", "dist/main"]
+EXPOSE 3000
+
+CMD ["npm", "run", "start:dev"]

@@ -4,7 +4,7 @@ import { MedicalOrderService } from '../medical-order.service';
 import { MedicalOrderRepository } from '../../repositories/medical-order.repository';
 import { AppointmentRepository } from '../../../appointment/repositories/appointment.repository';
 import { MedicationRepository } from '../../../medication/repositories/medication.repository';
-import { TestDataFactory } from '../../../test/test-helpers';
+import { TestDataFactory } from '../../../../test/test-helpers';
 
 describe('MedicalOrderService', () => {
   let service: MedicalOrderService;
