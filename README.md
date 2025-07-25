@@ -23,11 +23,20 @@
 
 # Colmena API
 
-API RESTful para gestión médica construida con [NestJS](https://nestjs.com/) y [Prisma ORM](https://www.prisma.io/). Sistema completo para la administración de pacientes, doctores, citas médicas, órdenes médicas y medicamentos.
+API RESTful para gestión médica construida con [NestJS](https://nestjs.com/) y [Prisma ORM](https://www.prisma.io/). Sistema completo para la administración de pacientes, doctores, citas médicas, órdenes médicas y medicamentos con **autenticación JWT y autorización basada en roles**.
 
 ## 🚀 **Características Principales**
 
+### **🔐 Sistema de Autenticación y Autorización:**
+- ✅ **JWT Authentication** con Passport.js
+- ✅ **Role-based Authorization** granular
+- ✅ **4 Roles administrativos**: ADMIN, RECEPTIONIST, NURSE, VIEWER
+- ✅ **Guards personalizados**: JwtAuthGuard, RolesGuard
+- ✅ **Decoradores**: @Roles(), @CurrentUser()
+- ✅ **Endpoints protegidos** en todos los dominios
+
 ### **Dominios Implementados:**
+- ✅ **Auth** - Sistema de autenticación JWT
 - ✅ **Patient** - Gestión completa de pacientes
 - ✅ **Doctor** - Administración de doctores y especialistas
 - ✅ **Appointment** - Sistema de citas médicas con estados
@@ -36,8 +45,10 @@ API RESTful para gestión médica construida con [NestJS](https://nestjs.com/) y
 
 ### **Arquitectura y Tecnologías:**
 - 🏗️ **Arquitectura verticalizada** por dominio (controllers, services, repositories, DTOs)
+- 🔐 **Autenticación JWT** con bcrypt para hashing de contraseñas
+- 🛡️ **Autorización granular** por roles y endpoints
 - 🔒 **Validación robusta** con Joi para variables de entorno y class-validator para DTOs
-- 📚 **Documentación automática** con Swagger/OpenAPI
+- 📚 **Documentación automática** con Swagger/OpenAPI y @ApiBearerAuth
 - 🗄️ **Base de datos PostgreSQL** con Prisma ORM
 - 🐳 **Contenerización** completa con Docker y docker-compose
 - 🧪 **Suite de pruebas profesional** con Jest (unitarias e integración)
@@ -49,6 +60,9 @@ API RESTful para gestión médica construida con [NestJS](https://nestjs.com/) y
 ## Tabla de Contenidos
 - [Instalación](#instalación)
 - [Variables de Entorno](#variables-de-entorno)
+- [🔐 Sistema de Autenticación](#-sistema-de-autenticación)
+- [👥 Roles y Permisos](#-roles-y-permisos)
+- [🚀 Inicio Rápido](#-inicio-rápido)
 - [Comandos Útiles](#comandos-útiles)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Uso de la API](#uso-de-la-api)
@@ -73,9 +87,165 @@ Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido:
 ```env
 PORT=3000
 DATABASE_URL=postgresql://usuario:password@localhost:5432/colmena_db
+JWT_SECRET=tu_jwt_secret_super_seguro_aqui
+JWT_EXPIRES_IN=1d
 ```
 
+**Variables requeridas:**
+- `PORT`: Puerto del servidor (default: 3000)
+- `DATABASE_URL`: URL de conexión a PostgreSQL
+- `JWT_SECRET`: Clave secreta para firmar tokens JWT
+- `JWT_EXPIRES_IN`: Tiempo de expiración de tokens (ej: 1d, 24h, 3600s)
+
 La validación de variables se realiza con Joi antes de levantar la app.
+
+---
+
+## 🔐 Sistema de Autenticación
+
+### **Arquitectura JWT**
+El sistema utiliza **JSON Web Tokens (JWT)** con **Passport.js** para autenticación y autorización:
+
+- **JwtAuthGuard**: Valida tokens JWT en cada request
+- **RolesGuard**: Verifica permisos basados en roles
+- **JwtStrategy**: Estrategia de Passport para validación automática
+- **Decoradores personalizados**: @Roles() y @CurrentUser()
+
+### **Endpoints de Autenticación**
+
+```bash
+# Login
+POST /auth/login
+Content-Type: application/json
+{
+  "email": "admin@colmena.com",
+  "password": "admin123"
+}
+
+# Respuesta
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "userId": "uuid",
+    "email": "admin@colmena.com",
+    "role": "ADMIN"
+  }
+}
+
+# Perfil del usuario autenticado
+GET /auth/profile
+Authorization: Bearer <token>
+
+# Verificar token
+GET /auth/verify
+Authorization: Bearer <token>
+```
+
+### **Usuarios de Prueba**
+El sistema incluye usuarios predefinidos para testing:
+
+```bash
+# Ejecutar seed para crear usuarios
+npm run db:seed
+```
+
+| Email | Rol | Contraseña |
+|-------|-----|------------|
+| admin@colmena.com | ADMIN | admin123 |
+| recepcion@colmena.com | RECEPTIONIST | admin123 |
+| enfermera@colmena.com | NURSE | admin123 |
+| supervisor@colmena.com | VIEWER | admin123 |
+
+---
+
+## 👥 Roles y Permisos
+
+### **Roles Administrativos**
+
+#### **🔴 ADMIN**
+- **Descripción**: Acceso completo a todo el sistema
+- **Permisos**: CRUD en todos los dominios, gestión de usuarios
+- **Endpoints**: Todos los endpoints disponibles
+
+#### **🟡 RECEPTIONIST**
+- **Descripción**: Gestión operativa del centro médico
+- **Permisos**: 
+  - Pacientes: Crear, leer, actualizar
+  - Doctores: Crear, leer, actualizar
+  - Citas: Crear, leer, actualizar
+  - Órdenes médicas: Crear, leer
+  - Medicamentos: Solo lectura
+
+#### **🟢 NURSE**
+- **Descripción**: Gestión clínica y asistencial
+- **Permisos**:
+  - Pacientes: Leer, actualizar datos clínicos
+  - Doctores: Solo lectura
+  - Citas: Leer, actualizar estados
+  - Órdenes médicas: Leer, gestionar medicamentos
+  - Medicamentos: Leer, adjuntar a órdenes
+
+#### **🔵 VIEWER**
+- **Descripción**: Solo lectura para supervisión y auditoría
+- **Permisos**: Solo lectura en todos los dominios
+
+### **Matriz de Permisos por Dominio**
+
+| Dominio | ADMIN | RECEPTIONIST | NURSE | VIEWER |
+|---------|-------|--------------|-------|--------|
+| **Patient** | CRUD | CRU | RU | R |
+| **Doctor** | CRUD | CRU | R | R |
+| **Appointment** | CRUD | CRU | R+Status | R |
+| **MedicalOrder** | CRUD | CR | R+Medications | R |
+| **Medication** | CRUD | R | R | R |
+
+**Leyenda**: C=Create, R=Read, U=Update, D=Delete
+
+---
+
+## 🚀 Inicio Rápido
+
+### **1. Configuración inicial**
+```bash
+# Clonar e instalar dependencias
+git clone <repo-url>
+cd colmena-api
+npm install
+
+# Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus valores
+```
+
+### **2. Base de datos**
+```bash
+# Ejecutar migraciones
+npx prisma migrate dev
+
+# Poblar con datos iniciales
+npm run db:seed
+```
+
+### **3. Iniciar servidor**
+```bash
+# Desarrollo
+npm run start:dev
+
+# El servidor estará disponible en http://localhost:3000
+# Swagger UI en http://localhost:3000/api
+```
+
+### **4. Probar autenticación**
+```bash
+# Login
+curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@colmena.com","password":"admin123"}'
+
+# Usar el token en requests protegidos
+curl -X GET http://localhost:3000/patient \
+  -H "Authorization: Bearer <tu_token_aqui>"
+```
 
 ## Project setup
 
@@ -391,20 +561,7 @@ docker-compose up --build
 
 Esto crea los contenedores de la API y PostgreSQL, y expone los puertos definidos en `.env` y `docker-compose.yml`.
 
-## Licencia
 
-MIT
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
 
 ## Swagger
 
@@ -453,4 +610,3 @@ Esto crea los contenedores de la API y PostgreSQL, y expone los puertos definido
 ## Licencia
 
 MIT
-
