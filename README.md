@@ -70,16 +70,13 @@
 git clone <repo-url>
 cd colmena-api
 
-# 2. Cambiar rama dev
-git checkout dev
+# 2. Configurar variables de entorno
+cp .env.example .env (Configurar JWT_SECRET)
 
 # 3. Ejecutar el script de inicio rápido
 docker compose up --build -d
 
-# 4. Iniciar Prisma
-docker compose exec api npm run prisma:init
-
-# 5. Alimentar base de datos usuarios de prueba
+# 4. Alimentar base de datos usuarios de prueba
 docker compose exec api npm run db:seed
 ```
 
